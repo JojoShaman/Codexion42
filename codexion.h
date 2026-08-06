@@ -14,13 +14,16 @@
 # define CODEXION_H
 
 # include <pthread.h>
-#include <sys/_pthread/_pthread_mutex_t.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <string.h>
 # include <sys/time.h>
 # include <errno.h>
+# include <stdbool.h>
+
+# define RED "\033[1;31m"
+# define RST "\033[0m"
 
 # define USAGE  "Usage: ./codexion " \
         "<number_of_coders> " \
@@ -35,6 +38,7 @@
 typedef pthread_mutex_t t_mtx;
 typedef struct s_dongle t_dongle;
 typedef struct s_coder t_coder;
+
 typedef struct s_data
 {
     size_t 	            number_of_coders;
@@ -44,6 +48,11 @@ typedef struct s_data
 	size_t  	        time_to_refactor;
 	size_t	            number_of_compiles_required;
 	size_t	            dongle_cooldown;
+    size_t              start;
+    bool                end;
+    bool                all_threads_ready;
+    t_mtx               data_mutex;
+    t_mtx               write_mutex;
 	char                *scheduler;
     t_coder             *coders;
     t_dongle            *dongles;
@@ -53,13 +62,14 @@ typedef struct s_data
 struct s_coder
 {
     int                 id;
+    bool                end_comp;
     t_data              *coder_data;
-    t_dongle            *right_dongle;          
-    t_dongle            *left_dongle;          
+    t_dongle            *first_dongle;          
+    t_dongle            *second_dongle;          
     size_t              compile_counter;
-    size_t              last_compile_time;
+    long                last_compile_time;
     pthread_t           thread;
-    t_mtx               lock;
+    t_mtx               coder_mutex;
     
 };
 
@@ -80,11 +90,41 @@ typedef enum    e_opcode
     DETACH
 }   t_opcode;
 
+typedef enum    e_timecode
+{
+    SECOND,
+    MILLISECOND,
+    MICROSECOND,
+}   t_timecode;
+
+typedef enum    e_state
+{
+    COMPILE,
+    DEBUG,
+    REFACTOR,
+    TAKE_FIRST_DONGLE,
+    TAKE_SECOND_DONGLE,
+    BURNOUT
+}   t_state;
+
 int	    parsing(char **argv, t_data *parse);
+void    *safe_malloc(size_t size);
+void    data_init(t_data *data);
 void	print_error_usage(void);
-void    *init_coder();
 void    error_exit(char *error_message);
 void    safe_mutex_handle(t_mtx *mutex, t_opcode opcode);
 void    safe_thread_handle(
     pthread_t *thread, void *(*foo)(void *), void* data, t_opcode opcode);
+void    set_bool(t_mtx *mutex, bool *dest, bool value);
+bool    get_bool(t_mtx *mutex, bool *value);
+void    set_long(t_mtx *mutex, long *dest, long value);
+long    get_long(t_mtx *mutex, long *value);
+bool    simulation_end(t_data *data);
+void    spinlock(t_data *data);
+long    get_time(t_timecode timecode);
+void    better_usleep(long usec, t_data *data);
+void    write_status(t_state status, t_coder *coder);
+void    simulation_start(t_data *data);
+void    init_coder(t_data *data);
+
 #endif

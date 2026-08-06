@@ -1,10 +1,4 @@
-#include "codexion.h"
-
-void    error_exit(char *error_message)
-{
-    fprintf(stderr, "%s", error_message);
-    exit(EXIT_FAILURE);
-}
+#include "../codexion.h"
 
 static int is_data_valid(char **argv)
 {

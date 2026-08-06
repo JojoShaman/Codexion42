@@ -1,6 +1,4 @@
-#include "codexion.h"
-#include <pthread.h>
-#include <sys/_pthread/_pthread_t.h>
+#include "../codexion.h"
 
 void    error_exit(char *error_message)
 {

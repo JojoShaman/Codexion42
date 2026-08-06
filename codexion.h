@@ -42,7 +42,7 @@ typedef struct s_coder t_coder;
 
 typedef struct s_data
 {
-    size_t 	            number_of_coders;
+    int 	            number_of_coders;
 	size_t              time_to_burnout;
 	size_t	            time_to_compile;
 	size_t	            time_to_debug;

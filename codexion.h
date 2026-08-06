@@ -23,6 +23,7 @@
 # include <stdbool.h>
 
 # define RED "\033[1;31m"
+# define GREEN "\033[1;33m"
 # define RST "\033[0m"
 
 # define USAGE  "Usage: ./codexion " \
@@ -56,6 +57,8 @@ typedef struct s_data
 	char                *scheduler;
     t_coder             *coders;
     t_dongle            *dongles;
+    pthread_t           monitor;
+    long                threads_running_nbr;
 
 }	t_data;
 
@@ -126,5 +129,8 @@ void    better_usleep(long usec, t_data *data);
 void    write_status(t_state status, t_coder *coder);
 void    simulation_start(t_data *data);
 void    init_coder(t_data *data);
+bool    all_coders_running(t_mtx *mutex, long *threads, long coder_nbr);
+void    increase_long(t_mtx *mutex, long *value);
+void    *monitor_data(void *data);
 
 #endif

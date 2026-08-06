@@ -42,6 +42,7 @@ void    data_init(t_data *data)
     i = -1;
     data->end = false;
     data->all_threads_ready = false;
+    data->threads_running_nbr = 0;
     safe_mutex_handle(&data->data_mutex, INIT);
     safe_mutex_handle(&data->write_mutex, INIT);
     data->coders = safe_malloc(

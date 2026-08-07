@@ -5,11 +5,14 @@ bool    coder_burned_out(t_coder *coder)
 {
     long    elapsed;
     long    t_to_burnout;
+    long    last_compile_t;
 
-    if (get_long(&coder->coder_mutex, &coder->last_compile_time) <= 0)
-        return (false);
-    elapsed = get_time(MILLISECOND) - get_long(&coder->coder_mutex, &coder->last_compile_time);
     t_to_burnout = coder->coder_data->time_to_burnout;
+    last_compile_t = get_long(&coder->coder_mutex, &coder->last_compile_time);
+    if (last_compile_t <= 0)
+        elapsed = get_time(MILLISECOND) - coder->coder_data->start;
+    else
+        elapsed = get_time(MILLISECOND) - last_compile_t;
     if (elapsed > t_to_burnout)
         return (true);
     return (false);

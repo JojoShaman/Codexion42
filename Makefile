@@ -2,7 +2,8 @@ NAME = codexion
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 INCLUDES = -Iheaders
-SRCS 	= 	utils/display_output.c \
+SRCS 	= 	utils/cooldown.c \
+			utils/display_output.c \
 			utils/error_handle.c \
 			utils/get_time_util.c \
 			utils/monitor.c \

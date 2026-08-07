@@ -52,6 +52,7 @@ void    data_init(t_data *data)
     while (++i < data->number_of_coders)
     {
         safe_mutex_handle(&data->dongles[i].dongle, INIT);
+        data->dongles[i].last_released = 0;
         data->dongles[i].dongle_id = i;
     }
 }

@@ -49,7 +49,7 @@ typedef struct s_data
 	size_t  	        time_to_refactor;
 	size_t	            number_of_compiles_required;
 	size_t	            dongle_cooldown;
-    size_t              start;
+    long              start;
     bool                end;
     bool                all_threads_ready;
     t_mtx               data_mutex;
@@ -79,6 +79,7 @@ struct s_coder
 struct s_dongle
 {
     t_mtx     dongle;
+    long      last_released;
     int       dongle_id;
 };
 
@@ -132,5 +133,6 @@ void    init_coder(t_data *data);
 bool    all_coders_running(t_mtx *mutex, long *threads, long coder_nbr);
 void    increase_long(t_mtx *mutex, long *value);
 void    *monitor_data(void *data);
+void    dongle_cooldown(t_dongle *dongle, t_data *data);
 
 #endif

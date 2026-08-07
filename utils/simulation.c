@@ -20,8 +20,10 @@ static void refactor(t_coder *coder)
 
 static void compile(t_coder *coder)
 {
+    dongle_cooldown(coder->first_dongle, coder->coder_data);
     safe_mutex_handle(&coder->first_dongle->dongle, LOCK);
     write_status(TAKE_FIRST_DONGLE, coder);
+    dongle_cooldown(coder->second_dongle, coder->coder_data);
     safe_mutex_handle(&coder->second_dongle->dongle, LOCK);
     write_status(TAKE_SECOND_DONGLE, coder);
 
@@ -33,10 +35,10 @@ static void compile(t_coder *coder)
     if (coder->coder_data->number_of_compiles_required > 0
         && coder->compile_counter == coder->coder_data->number_of_compiles_required)
         set_bool(&coder->coder_mutex, &coder->end_comp, true);
+    coder->first_dongle->last_released = get_time(MILLISECOND);
     safe_mutex_handle(&coder->first_dongle->dongle, UNLOCK);
+    coder->second_dongle->last_released = get_time(MILLISECOND);
     safe_mutex_handle(&coder->second_dongle->dongle, UNLOCK);
-
-    
 }
 
 static void *simulation(void *data)
